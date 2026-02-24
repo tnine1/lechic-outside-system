@@ -1,5 +1,5 @@
 (function(){
-  emailjs.init("YOUR_PUBLIC_KEY");
+  emailjs.init("P8F7fV4pfXdmp2PEF");
 })();
 
 const params = new URLSearchParams(window.location.search);
@@ -13,7 +13,7 @@ if(table){
 
   statusText.innerHTML = "Notifying staff...";
   
-  emailjs.send("YOUR_SERVICE_ID","YOUR_TEMPLATE_ID",{
+  emailjs.send("service_vfde9p3","Hellomyguy0005252",{
     table_number: table,
     time: new Date().toLocaleString()
   }).then(function(response){
