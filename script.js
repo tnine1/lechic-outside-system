@@ -68,23 +68,32 @@ if(table){
 
         // 5️⃣ Display menu & highlight suggestions
         menuDiv.innerHTML = "";
-        for(const category in menu){
-            const catDiv = document.createElement("div");
-            catDiv.className = "menu-category";
-            catDiv.textContent = category;
-            menuDiv.appendChild(catDiv);
 
-            menu[category].forEach(item => {
-                const itemDiv = document.createElement("div");
-                itemDiv.className = "menu-item";
-                if(suggestedItems.includes(item)){
-                    itemDiv.innerHTML = "✅ " + item; // highlight suggested
-                } else {
-                    itemDiv.textContent = item;
-                }
-                menuDiv.appendChild(itemDiv);
-            });
-        }
+// Loop through categories
+for (const category in menu) {
+
+    // Filter only suggested items inside this category
+    const filteredItems = menu[category].filter(item => 
+        suggestedItems.includes(item)
+    );
+
+    // If no suggested items in this category, skip it
+    if (filteredItems.length === 0) continue;
+
+    // Create category title
+    const catDiv = document.createElement("div");
+    catDiv.className = "menu-category";
+    catDiv.textContent = category;
+    menuDiv.appendChild(catDiv);
+
+    // Show only suggested items
+    filteredItems.forEach(item => {
+        const itemDiv = document.createElement("div");
+        itemDiv.className = "menu-item";
+        itemDiv.innerHTML = "✅ " + item;
+        menuDiv.appendChild(itemDiv);
+    });
+}
 
         spinner.style.display = "none";
         statusText.innerHTML = `Welcome! Staff notified for Table ${table}`;
