@@ -1,6 +1,6 @@
 // Initialize EmailJS
 (function(){
-  emailjs.init("L7OVBMyNKCDepbswR");
+  emailjs.init("WgUFtdGg6rd6lPxzi");
 })();
 
 // Menu Data
