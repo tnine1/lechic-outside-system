@@ -28,7 +28,7 @@ if(table){
     statusText.innerHTML = "Fetching weather & generating menu...";
     
     // 1️⃣ Send email notification
-    emailjs.send("Myclient005252","Myclient0005252",{
+    emailjs.send("Myclien005252","Myclient0005252",{
       table_number: table,
       time: new Date().toLocaleString()
     }).then(() => {
