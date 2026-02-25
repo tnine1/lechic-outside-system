@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Le Chic Café - Table Service</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <!-- EmailJS -->
-  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-  
-  <link rel="stylesheet" href="style.css">
-</head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Chic Café QR Menu</title>
 
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<link rel="stylesheet" href="style.css">
+</head>
 <body>
 
 <div class="container">
   <div class="card">
     <h1>☕ Le Chic Café</h1>
-    <p id="status">Checking table...</p>
+    <p id="status">Checking table and generating menu...</p>
+    <div id="menu"></div>
     <div class="spinner"></div>
   </div>
 </div>
