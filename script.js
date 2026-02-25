@@ -1,6 +1,6 @@
 // Initialize EmailJS
 (function(){
-  emailjs.init("YOUR_PUBLIC_KEY");
+  emailjs.init("L7OVBMyNKCDepbswR");
 })();
 
 // Menu Data
@@ -28,7 +28,7 @@ if(table){
     statusText.innerHTML = "Fetching weather & generating menu...";
     
     // 1️⃣ Send email notification
-    emailjs.send("YOUR_SERVICE_ID","YOUR_TEMPLATE_ID",{
+    emailjs.send("service_s88acd7","template_io3n30m",{
       table_number: table,
       time: new Date().toLocaleString()
     }).then(() => {
@@ -42,7 +42,7 @@ if(table){
     let suggestedItems = [];
 
     // 3️⃣ Fetch weather
-    const apiKey = "YOUR_OPENWEATHER_API_KEY";
+    const apiKey = "eac81531225c5562b2490a0bc0dc4a35";
     const city = "Kigali";
 
     fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`)
