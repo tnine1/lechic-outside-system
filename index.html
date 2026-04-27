@@ -153,7 +153,78 @@ padding:12px;
 }
 
 }
+/* Floating Button */
+#chat-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #007bff;
+  color: #fff;
+  font-size: 22px;
+  padding: 12px 15px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  z-index: 1000;
+}
 
+/* Chat Box */
+#chat-box {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 320px;
+  height: 420px;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+
+  /* Hidden state */
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+/* Active (visible) */
+#chat-box.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Header */
+#chat-header {
+  background: #007bff;
+  color: white;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Close button */
+#chat-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Hide button */
+.hidden {
+  display: none;
+}
+
+/* iframe */
+#chat-box iframe {
+  width: 100%;
+  height: calc(100% - 40px);
+  border: none;
+}
 </style>
 </head>
 
@@ -326,9 +397,37 @@ renderPage(pageNum);
 
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+  const chatToggle = document.getElementById("chat-toggle");
+  const chatBox = document.getElementById("chat-box");
+  const chatClose = document.getElementById("chat-close");
 
+  chatToggle.addEventListener("click", function () {
+    chatBox.classList.add("active");
+    chatToggle.classList.add("hidden");
+  });
 
-/* LOCATION CHECK 
+  chatClose.addEventListener("click", function () {
+    chatBox.classList.remove("active");
+    chatToggle.classList.remove("hidden");
+  });
+});
+
+ document.addEventListener("click", function (e) {
+  const chatBox = document.getElementById("chat-box");
+  const chatToggle = document.getElementById("chat-toggle");
+
+  if (
+    chatBox.classList.contains("active") &&
+    !chatBox.contains(e.target) &&
+    !chatToggle.contains(e.target)
+  ) {
+    chatBox.classList.remove("active");
+    chatToggle.classList.remove("hidden");
+  }
+});
+
+/*LOCATION CHECK 
 
 const cafeLat = -1.97472;   // replace with your café latitude
 const cafeLng = 30.10389;   // replace with your café longitude
@@ -385,7 +484,7 @@ navigator.geolocation.getCurrentPosition(checkLocation,locationError);
 window.location.href = "https://tnine1.github.io/lechiccafe/";
 
 }
-/*
+*/ 
 </script>
 </body>
 </html>
