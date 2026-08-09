@@ -1,490 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Le Chic Café QR Menu</title>
 
-<!-- EmailJS -->
+<!-- EmailJS SDK -->
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-
-<!-- PDF.js -->
+<!-- PDF.js SDK -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 
 <link rel="stylesheet" href="style.css">
-
-<style>
-
-*{
-box-sizing:border-box;
-margin:0;
-padding:0;
-font-family:Arial, Helvetica, sans-serif;
-}
-
-body{
-background:#f4f4f4;
-padding:10px;
-}
-
-.container{
-max-width:700px;
-margin:auto;
-}
-
-.card{
-background:white;
-padding:20px;
-border-radius:14px;
-box-shadow:0 6px 25px rgba(0,0,0,0.08);
-}
-
-h1{
-text-align:center;
-margin-bottom:10px;
-font-size:26px;
-}
-
-#status{
-text-align:center;
-font-size:14px;
-margin-bottom:15px;
-color:#444;
-}
-
-.menu-category{
-font-weight:bold;
-margin-top:18px;
-margin-bottom:5px;
-font-size:16px;
-text-transform:capitalize;
-border-bottom:1px solid #eee;
-padding-bottom:4px;
-}
-
-.menu-item{
-padding:8px 0;
-font-size:15px;
-border-bottom:1px dashed #eee;
-}
-
-.spinner{
-margin:20px auto;
-border:4px solid #eee;
-border-top:4px solid #333;
-border-radius:50%;
-width:32px;
-height:32px;
-animation:spin 1s linear infinite;
-}
-
-@keyframes spin{
-to{transform:rotate(360deg);}
-}
-
-#openPdf{
-margin-top:20px;
-padding:14px;
-border:none;
-background:#111;
-color:white;
-border-radius:10px;
-cursor:pointer;
-font-size:16px;
-width:100%;
-}
-
-#openPdf:active{
-transform:scale(0.98);
-}
-
-#pdfContainer{
-margin-top:15px;
-display:none;
-text-align:center;
-}
-
-#pdfViewer canvas{
-width:100%;
-border-radius:10px;
-box-shadow:0 5px 20px rgba(0,0,0,0.1);
-}
-
-.navButtons{
-margin-top:10px;
-display:flex;
-justify-content:center;
-gap:10px;
-align-items:center;
-}
-
-.navButtons button{
-padding:10px 14px;
-border:none;
-border-radius:6px;
-background:#111;
-color:white;
-cursor:pointer;
-}
-
-.navButtons span{
-font-size:14px;
-}
-
-@media (max-width:500px){
-
-.card{
-padding:15px;
-}
-
-h1{
-font-size:22px;
-}
-
-.menu-item{
-font-size:14px;
-}
-
-#openPdf{
-font-size:15px;
-padding:12px;
-}
-
-}
-/* Floating Button */
-#chat-toggle {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #007bff;
-  color: #fff;
-  font-size: 22px;
-  padding: 12px 15px;
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  z-index: 1000;
-}
-
-/* Chat Box */
-#chat-box {
-  position: fixed;
-  bottom: 80px;
-  right: 20px;
-  width: 320px;
-  height: 420px;
-  background: #fff;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-
-  /* Hidden state */
-  opacity: 0;
-  transform: translateY(20px);
-  pointer-events: none;
-  transition: all 0.3s ease;
-  z-index: 1000;
-}
-
-/* Active (visible) */
-#chat-box.active {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-/* Header */
-#chat-header {
-  background: #007bff;
-  color: white;
-  padding: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-/* Close button */
-#chat-close {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-/* Hide button */
-.hidden {
-  display: none;
-}
-
-/* iframe */
-#chat-box iframe {
-  width: 100%;
-  height: calc(100% - 40px);
-  border: none;
-}
-</style>
 </head>
-
 <body>
 
 <div class="container">
+  <div class="card">
+    <h1>☕ Le Chic Café</h1>
+    <p id="status">Checking table and generating menu...</p>
 
-<div class="card">
+    <div class="spinner"></div>
+    <div id="menu"></div>
 
-<h1>☕ Le Chic Café</h1>
+    <button id="openPdf">📖 View Full Menu</button>
 
-<p id="status">Checking table and generating menu...</p>
+    <div id="pdfContainer">
+      <div id="pdfViewer"></div>
+      <div class="navButtons">
+        <button id="prevPage">⬅ Prev</button>
+        <span id="pageInfo"></span>
+        <button id="nextPage">Next ➡</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-<div id="menu"></div>
-
- <!-- Floating Button -->
+<!-- Floating Chat Toggle Button -->
 <div id="chat-toggle">💬</div>
 
-<!-- Chatbox -->
+<!-- Chatbox Container -->
 <div id="chat-box">
   <div id="chat-header">
     <span>Chat with us</span>
     <button id="chat-close">✖</button>
   </div>
-
- <iframe
-    src="https://www.chatbase.co/chatbot-iframe/dbdzO-xP2dOJor0WlXtju"
-    width="100%"
-    
-    frameborder="0"
-></iframe>
-</div>
-<div class="spinner"></div>
-
-<button id="openPdf">📖 View Full Menu</button>
-
-<div id="pdfContainer">
-
-<div id="pdfViewer"></div>
-
-<div class="navButtons">
-<button id="prevPage">⬅ Prev</button>
-<span id="pageInfo"></span>
-<button id="nextPage">Next ➡</button>
+  <iframe src="https://www.chatbase.co/chatbot-iframe/dbdzO-xP2dOJor0WlXtju" frameborder="0"></iframe>
 </div>
 
-</div>
-
-</div>
-
-</div>
-
+<!-- Notification Sound -->
 <audio id="notifySound">
-<source src="https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3" type="audio/mpeg">
+  <source src="https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3" type="audio/mpeg">
 </audio>
 
+<!-- Main Logic Script -->
 <script src="script.js"></script>
-
-<script>
-
-/* OPEN / CLOSE MENU */
-
-const openPdfBtn = document.getElementById("openPdf");
-const pdfContainer = document.getElementById("pdfContainer");
-
-openPdfBtn.addEventListener("click", () => {
-
-if(pdfContainer.style.display === "none"){
-
-pdfContainer.style.display = "block";
-openPdfBtn.textContent = "❌ Close Menu";
-
-pdfContainer.scrollIntoView({behavior:"smooth"});
-
-}else{
-
-pdfContainer.style.display = "none";
-openPdfBtn.textContent = "📖 View Full Menu";
-
-}
-
-});
-
-/* PDF FLIP VIEWER */
-
-const url = "le chic menu.pdf";
-
-let pdfDoc = null,
-pageNum = 1,
-pageRendering = false,
-pageNumPending = null,
-scale = 1.4;
-
-const canvas = document.createElement("canvas");
-const ctx = canvas.getContext("2d");
-
-document.getElementById("pdfViewer").appendChild(canvas);
-
-function renderPage(num){
-
-pageRendering = true;
-
-pdfDoc.getPage(num).then(function(page){
-
-const viewport = page.getViewport({scale:scale});
-
-canvas.height = viewport.height;
-canvas.width = viewport.width;
-
-const renderContext = {
-canvasContext: ctx,
-viewport: viewport
-};
-
-const renderTask = page.render(renderContext);
-
-renderTask.promise.then(function(){
-
-pageRendering = false;
-
-if(pageNumPending !== null){
-renderPage(pageNumPending);
-pageNumPending = null;
-}
-
-});
-
-});
-
-document.getElementById("pageInfo").textContent =
-"Page " + num + " / " + pdfDoc.numPages;
-
-}
-
-function queueRenderPage(num){
-
-if(pageRendering){
-pageNumPending = num;
-}else{
-renderPage(num);
-}
-
-}
-
-document.getElementById("prevPage").addEventListener("click", function(){
-
-if(pageNum <= 1){return;}
-
-pageNum--;
-
-queueRenderPage(pageNum);
-
-});
-
-document.getElementById("nextPage").addEventListener("click", function(){
-
-if(pageNum >= pdfDoc.numPages){return;}
-
-pageNum++;
-
-queueRenderPage(pageNum);
-
-});
-
-pdfjsLib.getDocument(url).promise.then(function(pdfDoc_){
-
-pdfDoc = pdfDoc_;
-
-renderPage(pageNum);
-
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-  const chatToggle = document.getElementById("chat-toggle");
-  const chatBox = document.getElementById("chat-box");
-  const chatClose = document.getElementById("chat-close");
-
-  chatToggle.addEventListener("click", function () {
-    chatBox.classList.add("active");
-    chatToggle.classList.add("hidden");
-  });
-
-  chatClose.addEventListener("click", function () {
-    chatBox.classList.remove("active");
-    chatToggle.classList.remove("hidden");
-  });
-});
-
- document.addEventListener("click", function (e) {
-  const chatBox = document.getElementById("chat-box");
-  const chatToggle = document.getElementById("chat-toggle");
-
-  if (
-    chatBox.classList.contains("active") &&
-    !chatBox.contains(e.target) &&
-    !chatToggle.contains(e.target)
-  ) {
-    chatBox.classList.remove("active");
-    chatToggle.classList.remove("hidden");
-  }
-});
-
-/*LOCATION CHECK 
-
-const cafeLat = -1.97472;   // replace with your café latitude
-const cafeLng = 30.10389;   // replace with your café longitude
-const allowedRadius = 3000; // meters
-
-function getDistance(lat1, lon1, lat2, lon2){
-
-const R = 6371e3;
-
-const φ1 = lat1 * Math.PI/180;
-const φ2 = lat2 * Math.PI/180;
-
-const Δφ = (lat2-lat1) * Math.PI/180;
-const Δλ = (lon2-lon1) * Math.PI/180;
-
-const a =
-Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-Math.cos(φ1) * Math.cos(φ2) *
-Math.sin(Δλ/2) * Math.sin(Δλ/2);
-
-const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-
-return R * c;
-
-}
-
-function checkLocation(position){
-
-const userLat = position.coords.latitude;
-const userLng = position.coords.longitude;
-
-const distance = getDistance(userLat,userLng,cafeLat,cafeLng);
-
-if(distance > allowedRadius){
-
-window.location.href = "https://tnine1.github.io/lechiccafe/";
-
-}
-
-}
-
-function locationError(){
-
-window.location.href = "https://tnine1.github.io/lechiccafe/";
-
-}
-
-if(navigator.geolocation){
-
-navigator.geolocation.getCurrentPosition(checkLocation,locationError);
-
-}else{
-
-window.location.href = "https://tnine1.github.io/lechiccafe/";
-
-}
-*/ 
-</script>
 </body>
 </html>
