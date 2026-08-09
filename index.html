@@ -10,7 +10,230 @@
 <!-- PDF.js SDK -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 
-<link rel="stylesheet" href="style.css">
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #2F4F4F, #d4af37);
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 700px;
+  width: 100%;
+  margin: auto;
+}
+
+.card {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 10px;
+  color: #2F4F4F;
+  font-size: 26px;
+}
+
+#status {
+  text-align: center;
+  font-size: 15px;
+  margin-bottom: 15px;
+  color: #444;
+}
+
+#menu {
+  text-align: left;
+  margin-top: 15px;
+}
+
+.menu-category {
+  font-weight: bold;
+  margin-top: 18px;
+  margin-bottom: 5px;
+  font-size: 16px;
+  color: #2F4F4F;
+  text-transform: capitalize;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 4px;
+}
+
+.menu-item {
+  margin-left: 15px;
+  padding: 6px 0;
+  font-size: 15px;
+  border-bottom: 1px dashed #eee;
+}
+
+.spinner {
+  margin: 20px auto;
+  width: 40px;
+  height: 40px;
+  border: 4px solid #eee;
+  border-top: 4px solid #2F4F4F;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+#openPdf {
+  margin-top: 20px;
+  padding: 14px;
+  border: none;
+  background: #2F4F4F;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 100%;
+  transition: transform 0.1s ease;
+}
+
+#openPdf:active {
+  transform: scale(0.98);
+}
+
+#pdfContainer {
+  margin-top: 15px;
+  display: none;
+  text-align: center;
+}
+
+#pdfViewer canvas {
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.navButtons {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  align-items: center;
+}
+
+.navButtons button {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 6px;
+  background: #2F4F4F;
+  color: white;
+  cursor: pointer;
+}
+
+.navButtons span {
+  font-size: 14px;
+}
+
+/* Floating Button */
+#chat-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #0d6efd;
+  color: white;
+  font-size: 22px;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  z-index: 1000;
+  transition: transform 0.2s;
+}
+
+#chat-toggle:hover {
+  transform: scale(1.1);
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Chat Box */
+#chat-box {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 350px;
+  height: 500px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1000;
+}
+
+#chat-box.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+#chat-header {
+  background: #0d6efd;
+  color: white;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#chat-close {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#chat-box iframe {
+  width: 100%;
+  height: calc(100% - 40px);
+  border: none;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+  #chat-box {
+    width: 100%;
+    height: 100%;
+    bottom: 0;
+    right: 0;
+    border-radius: 0;
+  }
+}
+</style>
 </head>
 <body>
 
@@ -52,7 +275,218 @@
   <source src="https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3" type="audio/mpeg">
 </audio>
 
-<!-- Main Logic Script -->
-<script src="script.js"></script>
+<script>
+// Initialize EmailJS
+(function(){
+  emailjs.init("WgUFtdGg6rd6lPxzi");
+})();
+
+// Menu Data Structure
+const menu = {
+  hotDrinks: ["Coffee", "Tea", "Hot Chocolate"],
+  icedDrinks: ["Iced Coffee", "Iced Tea"],
+  juices: ["Passion Juice", "Pineapple Juice", "Tree Tomato Juice"],
+  smoothies: ["Banana Smoothie", "Strawberry Smoothie", "Le Chic Café Shake"],
+  milkshakes: ["Vanilla", "Chocolate", "Oreo"],
+  healthy: ["Fruits Plate", "Macedoine"],
+  breakfast: ["Toast", "Sandwich", "Omelette"],
+  lunch: ["Rice", "Spaghetti", "Wraps", "Chicken", "Beef"],
+  dinner: ["Pizza", "Burgers", "Salads", "Fish"]
+};
+
+const params = new URLSearchParams(window.location.search);
+const table = params.get("table");
+
+const statusText = document.getElementById("status");
+const menuDiv = document.getElementById("menu");
+const spinner = document.querySelector(".spinner");
+const sound = document.getElementById("notifySound");
+
+if(table){
+    statusText.innerHTML = "Fetching weather & generating menu...";
+    
+    // 1️⃣ Send email notification via EmailJS[cite: 1]
+    emailjs.send("Myclien005252", "Myclient0005252", {
+      table_number: table,
+      time: new Date().toLocaleString()
+    }).then(() => {
+        console.log("Email sent successfully");
+    }).catch(err => {
+        console.log("Email error:", err);
+    });
+
+    // 2️⃣ Get current time block[cite: 1]
+    let hour = new Date().getHours();
+    let suggestedItems = [];
+
+    // 3️⃣ Fetch weather conditions[cite: 1]
+    const apiKey = "eac81531225c5562b2490a0bc0dc4a35";
+    const city = "Kigali";
+
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`)
+    .then(res => res.json())
+    .then(data => {
+        const temp = data.main.temp;
+        const weather = data.weather[0].main.toLowerCase();
+
+        // 4️⃣ Time-based suggestions[cite: 1]
+        if(hour < 11){
+            suggestedItems.push(...menu.breakfast, ...menu.hotDrinks);
+        } else if(hour < 15){
+            suggestedItems.push(...menu.lunch, ...menu.icedDrinks, ...menu.juices);
+        } else {
+            suggestedItems.push(...menu.dinner, ...menu.smoothies, ...menu.milkshakes);
+        }
+
+        if(weather.includes("rain")){
+            suggestedItems.push(...menu.hotDrinks, "Soup");
+        } else if(weather.includes("clear") && temp > 25){
+            suggestedItems.push(...menu.icedDrinks, ...menu.smoothies, ...menu.juices);
+        }
+
+        // 5️⃣ Display filtered menu[cite: 1]
+        menuDiv.innerHTML = "";
+
+        for (const category in menu) {
+            const filteredItems = menu[category].filter(item => 
+                suggestedItems.includes(item)
+            );
+
+            if (filteredItems.length === 0) continue;
+
+            const catDiv = document.createElement("div");
+            catDiv.className = "menu-category";
+            catDiv.textContent = category;
+            menuDiv.appendChild(catDiv);
+
+            filteredItems.forEach(item => {
+                const itemDiv = document.createElement("div");
+                itemDiv.className = "menu-item";
+                itemDiv.innerHTML = "✅ " + item;
+                menuDiv.appendChild(itemDiv);
+            });
+        }
+
+        spinner.style.display = "none";
+        statusText.innerHTML = `Welcome! Staff notified for Table ${table}`;
+        sound.play().catch(e => console.log("Audio play blocked by browser policy:", e));
+    }).catch(err => {
+        spinner.style.display = "none";
+        statusText.innerHTML = "Error fetching weather. Showing menu anyway.";
+        console.log(err);
+    });
+
+} else {
+    spinner.style.display = "none";
+    statusText.innerHTML = "Invalid QR Code.";
+}
+
+/* PDF Viewer Logic[cite: 3] */
+const openPdfBtn = document.getElementById("openPdf");
+const pdfContainer = document.getElementById("pdfContainer");
+
+openPdfBtn.addEventListener("click", () => {
+    if(pdfContainer.style.display === "none" || pdfContainer.style.display === ""){
+        pdfContainer.style.display = "block";
+        openPdfBtn.textContent = "❌ Close Menu";
+        pdfContainer.scrollIntoView({behavior:"smooth"});
+    } else {
+        pdfContainer.style.display = "none";
+        openPdfBtn.textContent = "📖 View Full Menu";
+    }
+});
+
+const url = "le chic menu.pdf";
+let pdfDoc = null,
+    pageNum = 1,
+    pageRendering = false,
+    pageNumPending = null,
+    scale = 1.4;
+
+const canvas = document.createElement("canvas");
+const ctx = canvas.getContext("2d");
+document.getElementById("pdfViewer").appendChild(canvas);
+
+function renderPage(num){
+    pageRendering = true;
+    pdfDoc.getPage(num).then(function(page){
+        const viewport = page.getViewport({scale: scale});
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        const renderContext = {
+            canvasContext: ctx,
+            viewport: viewport
+        };
+        const renderTask = page.render(renderContext);
+
+        renderTask.promise.then(function(){
+            pageRendering = false;
+            if(pageNumPending !== null){
+                renderPage(pageNumPending);
+                pageNumPending = null;
+            }
+        });
+    });
+
+    document.getElementById("pageInfo").textContent = "Page " + num + " / " + pdfDoc.numPages;
+}
+
+function queueRenderPage(num){
+    if(pageRendering){
+        pageNumPending = num;
+    } else {
+        renderPage(num);
+    }
+}
+
+document.getElementById("prevPage").addEventListener("click", function(){
+    if(pageNum <= 1) return;
+    pageNum--;
+    queueRenderPage(pageNum);
+});
+
+document.getElementById("nextPage").addEventListener("click", function(){
+    if(pageNum >= pdfDoc.numPages) return;
+    pageNum++;
+    queueRenderPage(pageNum);
+});
+
+pdfjsLib.getDocument(url).promise.then(function(pdfDoc_){
+    pdfDoc = pdfDoc_;
+    renderPage(pageNum);
+});
+
+/* Chatbox Toggles[cite: 3] */
+document.addEventListener("DOMContentLoaded", function () {
+  const chatToggle = document.getElementById("chat-toggle");
+  const chatBox = document.getElementById("chat-box");
+  const chatClose = document.getElementById("chat-close");
+
+  chatToggle.addEventListener("click", function () {
+    chatBox.classList.add("active");
+    chatToggle.classList.add("hidden");
+  });
+
+  chatClose.addEventListener("click", function () {
+    chatBox.classList.remove("active");
+    chatToggle.classList.remove("hidden");
+  });
+});
+
+document.addEventListener("click", function (e) {
+  const chatBox = document.getElementById("chat-box");
+  const chatToggle = document.getElementById("chat-toggle");
+
+  if (
+    chatBox.classList.contains("active") &&
+    !chatBox.contains(e.target) &&
+    !chatToggle.contains(e.target)
+  ) {
+    chatBox.classList.remove("active");
+    chatToggle.classList.remove("hidden");
+  }
+});
+</script>
 </body>
 </html>
