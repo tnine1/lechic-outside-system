@@ -2,661 +2,118 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>Le Chic Café — Digital Menu & Dining Experience</title>
-
-  <!-- Google Fonts for Modern Luxury Typography -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
-
-  <!-- EmailJS SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-  <!-- PDF.js SDK -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Waiter Live Alert Terminal</title>
   <style>
-    :root {
-      --primary-color: #1A3636;
-      --accent-gold: #D4AF37;
-      --accent-hover: #b8972e;
-      --bg-gradient: linear-gradient(135deg, #0F2027 0%, #203A43 50%, #2C5364 100%);
-      --card-bg: #FFFFFF;
-      --text-main: #2C3E50;
-      --text-muted: #6C7A89;
-      --border-color: #EBF0F5;
-      --shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
-      --radius: 16px;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    }
-
-    body {
-      background: var(--bg-gradient);
-      padding: 20px 12px;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      color: var(--text-main);
-    }
-
-    .container {
-      max-width: 680px;
-      width: 100%;
-      margin: auto;
-    }
-
-    .card {
-      background: var(--card-bg);
-      padding: 32px 24px;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      animation: fadeIn 0.5s ease-out;
-    }
-
-    /* Header Styling */
-    .brand-header {
-      text-align: center;
-      border-bottom: 2px solid var(--border-color);
-      padding-bottom: 20px;
-      margin-bottom: 20px;
-    }
-
-    .brand-logo {
-      font-family: 'Playfair Display', serif;
-      font-size: 30px;
-      font-weight: 700;
-      color: var(--primary-color);
-      letter-spacing: -0.5px;
-    }
-
-    .table-badge {
-      display: inline-block;
-      background: rgba(212, 175, 55, 0.15);
-      color: #8A6D0B;
-      font-weight: 600;
-      font-size: 13px;
-      padding: 6px 16px;
-      border-radius: 20px;
-      margin-top: 8px;
-    }
-
-    .welcome-msg {
-      text-align: center;
-      font-size: 14.5px;
-      color: var(--text-muted);
-      margin-bottom: 20px;
-      line-height: 1.5;
-    }
-
-    /* Interactive Navigation Tabs */
-    .view-tabs {
-      display: flex;
-      background: #F4F7F6;
-      padding: 4px;
-      border-radius: 10px;
-      margin-bottom: 24px;
-      gap: 4px;
-    }
-
-    .tab-btn {
-      flex: 1;
-      padding: 10px 14px;
-      border: none;
-      background: transparent;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-muted);
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .tab-btn.active {
-      background: var(--primary-color);
-      color: #FFFFFF;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    /* Menu Grid & Category Layout */
-    .menu-section {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .category-card {
-      background: #FAFAFA;
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 16px 20px;
-    }
-
-    .category-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 18px;
-      color: var(--primary-color);
-      font-weight: 700;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 8px;
-      margin-bottom: 12px;
-      text-transform: capitalize;
-    }
-
-    .menu-item-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 0;
-      border-bottom: 1px dashed var(--border-color);
-      font-size: 15px;
-    }
-
-    .menu-item-row:last-child {
-      border-bottom: none;
-    }
-
-    .item-name {
-      font-weight: 500;
-      color: #333;
-    }
-
-    .item-tag {
-      font-size: 11px;
-      background: #E8F5E9;
-      color: #2E7D32;
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-weight: 600;
-    }
-
-    /* Spinner */
-    .spinner-container {
-      text-align: center;
-      padding: 30px 0;
-    }
-
-    .spinner {
-      width: 42px;
-      height: 42px;
-      border: 3.5px solid var(--border-color);
-      border-top: 3.5px solid var(--accent-gold);
-      border-radius: 50%;
-      margin: 0 auto 12px;
-      animation: spin 0.8s linear infinite;
-    }
-
-    /* PDF Viewer Container */
-    #pdfContainer {
-      display: none;
-      background: #F8F9FA;
-      border-radius: 12px;
-      padding: 16px;
-      border: 1px solid var(--border-color);
-    }
-
-    .pdf-actions {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-    }
-
-    .pdf-btn-download {
-      font-size: 13px;
-      color: var(--primary-color);
-      text-decoration: underline;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    #pdfViewer {
-      width: 100%;
-      overflow-x: auto;
-      text-align: center;
-      background: #EAEAEA;
-      border-radius: 8px;
-      padding: 10px 0;
-    }
-
-    #pdfViewer canvas {
-      max-width: 100%;
-      height: auto !important;
-      border-radius: 6px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-    }
-
-    .pdf-nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 14px;
-    }
-
-    .btn-secondary {
-      background: var(--primary-color);
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-    }
-
-    .btn-secondary:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-
-    /* Action Buttons */
-    .primary-btn {
-      width: 100%;
-      padding: 14px;
-      background: var(--primary-color);
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 20px;
-      box-shadow: 0 4px 12px rgba(26, 54, 54, 0.2);
-      transition: all 0.2s;
-    }
-
-    .primary-btn:hover {
-      background: #112424;
-    }
-
-    /* Floating Chat Button */
-    #chat-toggle {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: var(--accent-gold);
-      color: #FFFFFF;
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-      cursor: pointer;
-      z-index: 1000;
-      transition: transform 0.2s ease;
-    }
-
-    #chat-toggle:hover {
-      transform: scale(1.08);
-    }
-
-    #chat-box {
-      position: fixed;
-      bottom: 90px;
-      right: 24px;
-      width: 360px;
-      height: 520px;
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-      display: none;
-      flex-direction: column;
-      overflow: hidden;
-      z-index: 1000;
-      border: 1px solid var(--border-color);
-    }
-
-    #chat-box.active {
-      display: flex;
-    }
-
-    #chat-header {
-      background: var(--primary-color);
-      color: white;
-      padding: 12px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: 600;
-      font-size: 14px;
-    }
-
-    #chat-close {
-      background: transparent;
-      border: none;
-      color: white;
-      font-size: 18px;
-      cursor: pointer;
-    }
-
-    #chat-box iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @media (max-width: 480px) {
-      .card { padding: 20px 16px; }
-      #chat-box { width: 100%; height: 100%; bottom: 0; right: 0; border-radius: 0; }
-    }
+    body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #111; color: #FFF; margin: 0; padding: 15px; }
+    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 10px; }
+    .alert-card { background: #222; border-left: 5px solid #D4AF37; padding: 15px; border-radius: 8px; margin-top: 12px; }
+    .alert-card.scan { border-left-color: #00E676; }
+    .btn-ack { background: #00E676; color: #000; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; }
+    .btn-confirm { background: #29B6F6; color: #000; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <div class="card">
-    <!-- Brand Header -->
-    <div class="brand-header">
-      <div class="brand-logo">Le Chic Café</div>
-      <div id="tableBadge" class="table-badge">Table --</div>
-    </div>
-
-    <!-- Communication Status Message -->
-    <p id="status" class="welcome-msg">Connecting to service desk...</p>
-
-    <!-- Loading Spinner -->
-    <div id="spinnerContainer" class="spinner-container">
-      <div class="spinner"></div>
-      <span style="font-size: 13px; color: #777;">Preparing customized menu recommendations...</span>
-    </div>
-
-    <!-- Navigation Tabs -->
-    <div id="viewTabs" class="view-tabs" style="display: none;">
-      <button id="tabRecommended" class="tab-btn active" onclick="switchView('recommended')">✨ Recommended</button>
-      <button id="tabFullMenu" class="tab-btn" onclick="switchView('full')">📋 All Categories</button>
-    </div>
-
-    <!-- Dynamic HTML Menu Container -->
-    <div id="menu" class="menu-section"></div>
-
-    <!-- PDF Viewer Toggle Button -->
-    <button id="openPdf" class="primary-btn">📖 View Full PDF Menu</button>
-
-    <!-- PDF Viewer Container -->
-    <div id="pdfContainer">
-      <div class="pdf-actions">
-        <span style="font-weight: 600; font-size: 14px; color: var(--primary-color);">Official Menu PDF</span>
-        <a href="le chic menu.pdf" target="_blank" class="pdf-btn-download">Open in New Tab ↗</a>
-      </div>
-
-      <div id="pdfViewer"></div>
-
-      <div class="pdf-nav">
-        <button id="prevPage" class="btn-secondary">⬅ Prev</button>
-        <span id="pageInfo" style="font-size: 13px; font-weight: 500;">Page 1 / --</span>
-        <button id="nextPage" class="btn-secondary">Next ➡</button>
-      </div>
-    </div>
-  </div>
+<div class="header">
+  <h2>🔔 Staff Live Alerts</h2>
+  <button onclick="enableAudio()" style="background:#444; color:#FFF; border:none; padding:6px 12px; border-radius:6px;">🔊 Enable Audio</button>
 </div>
 
-<!-- Floating Chat Button -->
-<div id="chat-toggle">💬</div>
-
-<!-- Chatbox Container -->
-<div id="chat-box">
-  <div id="chat-header">
-    <span>Le Chic Assistant</span>
-    <button id="chat-close">✕</button>
-  </div>
-  <iframe src="https://www.chatbase.co/chatbot-iframe/dbdzO-xP2dOJor0WlXtju"></iframe>
+<div id="alertsContainer">
+  <p style="color:#888;">Listening for QR table scans and orders...</p>
 </div>
 
-<!-- Notification Sound -->
-<audio id="notifySound">
-  <source src="https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3" type="audio/mpeg">
-</audio>
+<!-- Audio notification sound -->
+<audio id="alertSound" src="https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3"></audio>
 
 <script>
-  // Initialize EmailJS
-  (function(){
-    emailjs.init("WgUFtdGg6rd6lPxzi");
-  })();
+  const API_BASE = "https://your-domain.infinityfreeapp.com/api";
+  const companyId = 1; // Multi-tenant company ID
+  let audioEnabled = false;
+  let knownScans = new Set();
+  let knownOrders = new Set();
 
-  // Full Menu Data Array
-  const menuData = {
-    "Hot Drinks": ["Espresso", "Cappuccino", "Café Latte", "Special Tea", "Hot Chocolate"],
-    "Iced Drinks": ["Iced Latte", "Iced Americano", "Iced Passion Tea"],
-    "Fresh Juices": ["Passion Fruit Juice", "Pineapple Juice", "Tree Tomato Juice"],
-    "Smoothies & Shakes": ["Banana Smoothie", "Strawberry Smoothie", "Le Chic Signature Shake"],
-    "Milkshakes": ["Classic Vanilla", "Double Chocolate", "Oreo Crunch"],
-    "Healthy Plates": ["Fresh Fruit Plate", "Macedoine Fruit Salad"],
-    "Breakfast Specials": ["Avocado Toast", "Club Sandwich", "Cheese Omelette"],
-    "Lunch Entrees": ["Steamed Rice", "Spaghetti Bolognese", "Chicken Wraps", "Grilled Chicken", "Beef Tenderloin"],
-    "Dinner Specials": ["Artisanal Pizza", "Gourmet Burgers", "Chef's Garden Salad", "Grilled Fish Fillet"]
-  };
+  function enableAudio() {
+    audioEnabled = true;
+    document.getElementById('alertSound').play().catch(()=>{});
+    alert("Audio notifications enabled!");
+  }
 
-  const params = new URLSearchParams(window.location.search);
-  const table = params.get("table");
-
-  const statusText = document.getElementById("status");
-  const tableBadge = document.getElementById("tableBadge");
-  const menuDiv = document.getElementById("menu");
-  const spinnerContainer = document.getElementById("spinnerContainer");
-  const viewTabs = document.getElementById("viewTabs");
-  const sound = document.getElementById("notifySound");
-
-  let suggestedItems = [];
-  let currentTab = 'recommended';
-
-  if (table) {
-    tableBadge.textContent = `Table ${table}`;
-    statusText.textContent = "Connecting with waiter desk & loading menu...";
-
-    // 1️⃣ Notify Wait Staff via EmailJS
-    emailjs.send("Myclien005252", "Myclient0005252", {
-      table_number: table,
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    }).catch(err => console.error("Notification Log:", err));
-
-    // 2️⃣ Fetch Local Weather and Calculate Time Context
-    const hour = new Date().getHours();
-    const apiKey = "eac81531225c5562b2490a0bc0dc4a35";
-    const city = "Kigali";
-
-    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`)
+  function pollFeed() {
+    fetch(`${API_BASE}/waiter_feed.php?company_id=${companyId}`)
       .then(res => res.json())
       .then(data => {
-        const temp = data.main ? data.main.temp : 22;
-        const weather = data.weather ? data.weather[0].main.toLowerCase() : "clear";
+        const container = document.getElementById('alertsContainer');
+        let html = "";
+        let hasNewAlert = false;
 
-        // Logic for Recommendations
-        if (hour < 11) {
-          suggestedItems.push(...menuData["Breakfast Specials"], ...menuData["Hot Drinks"]);
-        } else if (hour < 15) {
-          suggestedItems.push(...menuData["Lunch Entrees"], ...menuData["Iced Drinks"], ...menuData["Fresh Juices"]);
+        // Process Table Scans
+        data.scans.forEach(scan => {
+          if (!knownScans.has(scan.id)) {
+            knownScans.add(scan.id);
+            hasNewAlert = true;
+          }
+          html += `
+            <div class="alert-card scan">
+              <strong style="color:#00E676; font-size:18px;">📍 TABLE ${scan.table_number} SCANNED QR!</strong>
+              <div>Client waiting for service (${new Date(scan.scanned_at).toLocaleTimeString()})</div>
+              <button class="btn-ack" onclick="ackScan(${scan.id})">✅ Acknowledge & Attend</button>
+            </div>
+          `;
+        });
+
+        // Process Orders
+        data.orders.forEach(order => {
+          if (!knownOrders.has(order.id)) {
+            knownOrders.add(order.id);
+            hasNewAlert = true;
+          }
+          const items = JSON.parse(order.items_json);
+          const itemNames = items.map(i => i.name).join(", ");
+
+          html += `
+            <div class="alert-card">
+              <strong style="color:#29B6F6; font-size:18px;">🛒 TABLE ${order.table_number} ORDERED</strong>
+              <div>Items: <strong>${itemNames}</strong></div>
+              <div>Total: ${Number(order.total_amount).toLocaleString()} RWF</div>
+              <div>Status: <em>${order.status}</em></div>
+              <button class="btn-confirm" onclick="confirmOrder(${order.id}, 'confirmed')">👍 Confirm Order with Customer</button>
+            </div>
+          `;
+        });
+
+        if(html !== "") {
+          container.innerHTML = html;
         } else {
-          suggestedItems.push(...menuData["Dinner Specials"], ...menuData["Smoothies & Shakes"], ...menuData["Milkshakes"]);
+          container.innerHTML = `<p style="color:#888;">No pending calls or orders right now.</p>`;
         }
 
-        if (weather.includes("rain")) {
-          suggestedItems.push(...menuData["Hot Drinks"]);
-        } else if (temp > 24) {
-          suggestedItems.push(...menuData["Iced Drinks"], ...menuData["Fresh Juices"], ...menuData["Smoothies & Shakes"]);
-        }
-
-        spinnerContainer.style.display = "none";
-        viewTabs.style.display = "flex";
-        statusText.innerHTML = `Welcome! A staff member has been notified for <strong>Table ${table}</strong>. Take your time browsing our menu below.`;
-
-        renderMenu();
-        sound.play().catch(() => {});
-      })
-      .catch(() => {
-        spinnerContainer.style.display = "none";
-        viewTabs.style.display = "flex";
-        statusText.textContent = `Welcome to Table ${table}! Explore our complete menu selection below.`;
-        switchView('full');
-      });
-
-  } else {
-    tableBadge.textContent = "Guest View";
-    spinnerContainer.style.display = "none";
-    viewTabs.style.display = "flex";
-    statusText.textContent = "Welcome to Le Chic Café! Browse our delicious offerings below.";
-    switchView('full');
-  }
-
-  // Render HTML Menu based on Tab View
-  function renderMenu() {
-    menuDiv.innerHTML = "";
-
-    for (const category in menuData) {
-      const items = menuData[category];
-      const itemsToDisplay = (currentTab === 'recommended') 
-        ? items.filter(item => suggestedItems.includes(item)) 
-        : items;
-
-      if (itemsToDisplay.length === 0) continue;
-
-      const catCard = document.createElement("div");
-      catCard.className = "category-card";
-
-      const catTitle = document.createElement("div");
-      catTitle.className = "category-title";
-      catTitle.textContent = category;
-      catCard.appendChild(catTitle);
-
-      itemsToDisplay.forEach(item => {
-        const row = document.createElement("div");
-        row.className = "menu-item-row";
-        
-        const isSuggested = suggestedItems.includes(item);
-        row.innerHTML = `
-          <span class="item-name">${item}</span>
-          ${isSuggested && currentTab === 'full' ? '<span class="item-tag">Recommended</span>' : ''}
-        `;
-        catCard.appendChild(row);
-      });
-
-      menuDiv.appendChild(catCard);
-    }
-  }
-
-  function switchView(tab) {
-    currentTab = tab;
-    document.getElementById("tabRecommended").classList.toggle("active", tab === 'recommended');
-    document.getElementById("tabFullMenu").classList.toggle("active", tab === 'full');
-    renderMenu();
-  }
-
-  /* High-DPI Rendering PDF Viewer Logic */
-  const openPdfBtn = document.getElementById("openPdf");
-  const pdfContainer = document.getElementById("pdfContainer");
-  const url = "le chic menu.pdf";
-
-  let pdfDoc = null,
-      pageNum = 1,
-      pageRendering = false,
-      pageNumPending = null;
-
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
-  document.getElementById("pdfViewer").appendChild(canvas);
-
-  openPdfBtn.addEventListener("click", () => {
-    if (pdfContainer.style.display === "none" || pdfContainer.style.display === "") {
-      pdfContainer.style.display = "block";
-      openPdfBtn.textContent = "✕ Close PDF View";
-      pdfContainer.scrollIntoView({ behavior: "smooth" });
-      if (!pdfDoc) loadPdf();
-    } else {
-      pdfContainer.style.display = "none";
-      openPdfBtn.textContent = "📖 View Full PDF Menu";
-    }
-  });
-
-  function loadPdf() {
-    pdfjsLib.getDocument(url).promise.then(pdf => {
-      pdfDoc = pdf;
-      renderPage(pageNum);
-    }).catch(err => {
-      document.getElementById("pdfViewer").innerHTML = `<p style="padding: 20px; font-size:13px; color: #888;">Unable to display embedded PDF directly. <a href="${url}" target="_blank">Click here to download/view the menu file</a>.</p>`;
-    });
-  }
-
-  function renderPage(num) {
-    pageRendering = true;
-    pdfDoc.getPage(num).then(page => {
-      // Calculate responsive scale based on container width
-      const containerWidth = document.getElementById("pdfViewer").clientWidth || 600;
-      const unscaledViewport = page.getViewport({ scale: 1 });
-      const scale = (containerWidth / unscaledViewport.width) * 1.5; // High resolution rendering
-
-      const viewport = page.getViewport({ scale: scale });
-      canvas.height = viewport.height;
-      canvas.width = viewport.width;
-
-      const renderContext = {
-        canvasContext: ctx,
-        viewport: viewport
-      };
-
-      const renderTask = page.render(renderContext);
-      renderTask.promise.then(() => {
-        pageRendering = false;
-        if (pageNumPending !== null) {
-          renderPage(pageNumPending);
-          pageNumPending = null;
+        if (hasNewAlert && audioEnabled) {
+          document.getElementById('alertSound').play().catch(()=>{});
         }
       });
-    });
-
-    document.getElementById("pageInfo").textContent = `Page ${num} / ${pdfDoc.numPages}`;
-    document.getElementById("prevPage").disabled = num <= 1;
-    document.getElementById("nextPage").disabled = num >= pdfDoc.numPages;
   }
 
-  function queueRenderPage(num) {
-    if (pageRendering) {
-      pageNumPending = num;
-    } else {
-      renderPage(num);
-    }
+  function ackScan(scanId) {
+    fetch(`${API_BASE}/update_order.php`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ scan_id: scanId, scan_status: 'completed' })
+    }).then(() => pollFeed());
   }
 
-  document.getElementById("prevPage").addEventListener("click", () => {
-    if (pageNum <= 1) return;
-    pageNum--;
-    queueRenderPage(pageNum);
-  });
+  function confirmOrder(orderId, status) {
+    fetch(`${API_BASE}/update_order.php`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ order_id: orderId, status: status })
+    }).then(() => pollFeed());
+  }
 
-  document.getElementById("nextPage").addEventListener("click", () => {
-    if (pageNum >= pdfDoc.numPages) return;
-    pageNum++;
-    queueRenderPage(pageNum);
-  });
-
-  /* Floating Chatbot Logic */
-  const chatToggle = document.getElementById("chat-toggle");
-  const chatBox = document.getElementById("chat-box");
-  const chatClose = document.getElementById("chat-close");
-
-  chatToggle.addEventListener("click", () => {
-    chatBox.classList.toggle("active");
-  });
-
-  chatClose.addEventListener("click", () => {
-    chatBox.classList.remove("active");
-  });
+  // Poll server every 3 seconds for instant updates
+  setInterval(pollFeed, 3000);
+  pollFeed();
 </script>
 </body>
 </html>
