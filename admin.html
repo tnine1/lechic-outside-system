@@ -158,6 +158,20 @@
   window.onload = () => {
     loadAdminMenu();
   };
+
+  // Add a timeout signal to prevent infinite hanging
+const controller = new AbortController();
+const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+
+fetch(`https://greatservice.page.gd/API/get_menu.php?company=${companySlug}`, { signal: controller.signal })
+  .then(res => res.json())
+  .then(data => {
+    clearTimeout(timeoutId);
+    // process data...
+  })
+  .catch(err => {
+    console.warn("Backend slow or offline, showing fallback.");
+  });
 </script>
 </body>
 </html>
