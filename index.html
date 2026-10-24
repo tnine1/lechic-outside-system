@@ -1,273 +1,423 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Le Chic Café QR Menu</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Le Chic Café — Digital Menu & Dining Experience</title>
 
-<!-- EmailJS SDK -->
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-<!-- PDF.js SDK -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+  <!-- Google Fonts for Modern Luxury Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
 
-<style>
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', Arial, sans-serif;
-}
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <!-- PDF.js SDK -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 
-body {
-  background: linear-gradient(135deg, #2F4F4F, #d4af37);
-  padding: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-}
+  <style>
+    :root {
+      --primary-color: #1A3636;
+      --accent-gold: #D4AF37;
+      --accent-hover: #b8972e;
+      --bg-gradient: linear-gradient(135deg, #0F2027 0%, #203A43 50%, #2C5364 100%);
+      --card-bg: #FFFFFF;
+      --text-main: #2C3E50;
+      --text-muted: #6C7A89;
+      --border-color: #EBF0F5;
+      --shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+      --radius: 16px;
+    }
 
-.container {
-  max-width: 700px;
-  width: 100%;
-  margin: auto;
-}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
 
-.card {
-  background: white;
-  padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-  animation: fadeIn 0.6s ease-in-out;
-}
+    body {
+      background: var(--bg-gradient);
+      padding: 20px 12px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      color: var(--text-main);
+    }
 
-h1 {
-  text-align: center;
-  margin-bottom: 10px;
-  color: #2F4F4F;
-  font-size: 26px;
-}
+    .container {
+      max-width: 680px;
+      width: 100%;
+      margin: auto;
+    }
 
-#status {
-  text-align: center;
-  font-size: 15px;
-  margin-bottom: 15px;
-  color: #444;
-}
+    .card {
+      background: var(--card-bg);
+      padding: 32px 24px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      animation: fadeIn 0.5s ease-out;
+    }
 
-#menu {
-  text-align: left;
-  margin-top: 15px;
-}
+    /* Header Styling */
+    .brand-header {
+      text-align: center;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 20px;
+      margin-bottom: 20px;
+    }
 
-.menu-category {
-  font-weight: bold;
-  margin-top: 18px;
-  margin-bottom: 5px;
-  font-size: 16px;
-  color: #2F4F4F;
-  text-transform: capitalize;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 4px;
-}
+    .brand-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--primary-color);
+      letter-spacing: -0.5px;
+    }
 
-.menu-item {
-  margin-left: 15px;
-  padding: 6px 0;
-  font-size: 15px;
-  border-bottom: 1px dashed #eee;
-}
+    .table-badge {
+      display: inline-block;
+      background: rgba(212, 175, 55, 0.15);
+      color: #8A6D0B;
+      font-weight: 600;
+      font-size: 13px;
+      padding: 6px 16px;
+      border-radius: 20px;
+      margin-top: 8px;
+    }
 
-.spinner {
-  margin: 20px auto;
-  width: 40px;
-  height: 40px;
-  border: 4px solid #eee;
-  border-top: 4px solid #2F4F4F;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
+    .welcome-msg {
+      text-align: center;
+      font-size: 14.5px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
 
-#openPdf {
-  margin-top: 20px;
-  padding: 14px;
-  border: none;
-  background: #2F4F4F;
-  color: white;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 16px;
-  width: 100%;
-  transition: transform 0.1s ease;
-}
+    /* Interactive Navigation Tabs */
+    .view-tabs {
+      display: flex;
+      background: #F4F7F6;
+      padding: 4px;
+      border-radius: 10px;
+      margin-bottom: 24px;
+      gap: 4px;
+    }
 
-#openPdf:active {
-  transform: scale(0.98);
-}
+    .tab-btn {
+      flex: 1;
+      padding: 10px 14px;
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
 
-#pdfContainer {
-  margin-top: 15px;
-  display: none;
-  text-align: center;
-}
+    .tab-btn.active {
+      background: var(--primary-color);
+      color: #FFFFFF;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
 
-#pdfViewer canvas {
-  width: 100%;
-  border-radius: 10px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-}
+    /* Menu Grid & Category Layout */
+    .menu-section {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
 
-.navButtons {
-  margin-top: 10px;
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  align-items: center;
-}
+    .category-card {
+      background: #FAFAFA;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px 20px;
+    }
 
-.navButtons button {
-  padding: 10px 14px;
-  border: none;
-  border-radius: 6px;
-  background: #2F4F4F;
-  color: white;
-  cursor: pointer;
-}
+    .category-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      color: var(--primary-color);
+      font-weight: 700;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+      text-transform: capitalize;
+    }
 
-.navButtons span {
-  font-size: 14px;
-}
+    .menu-item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px dashed var(--border-color);
+      font-size: 15px;
+    }
 
-/* Floating Button */
-#chat-toggle {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #0d6efd;
-  color: white;
-  font-size: 22px;
-  width: 60px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  z-index: 1000;
-  transition: transform 0.2s;
-}
+    .menu-item-row:last-child {
+      border-bottom: none;
+    }
 
-#chat-toggle:hover {
-  transform: scale(1.1);
-}
+    .item-name {
+      font-weight: 500;
+      color: #333;
+    }
 
-.hidden {
-  display: none !important;
-}
+    .item-tag {
+      font-size: 11px;
+      background: #E8F5E9;
+      color: #2E7D32;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
 
-/* Chat Box */
-#chat-box {
-  position: fixed;
-  bottom: 90px;
-  right: 20px;
-  width: 350px;
-  height: 500px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 5px 25px rgba(0,0,0,0.2);
-  opacity: 0;
-  transform: translateY(20px);
-  pointer-events: none;
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  z-index: 1000;
-}
+    /* Spinner */
+    .spinner-container {
+      text-align: center;
+      padding: 30px 0;
+    }
 
-#chat-box.active {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
+    .spinner {
+      width: 42px;
+      height: 42px;
+      border: 3.5px solid var(--border-color);
+      border-top: 3.5px solid var(--accent-gold);
+      border-radius: 50%;
+      margin: 0 auto 12px;
+      animation: spin 0.8s linear infinite;
+    }
 
-#chat-header {
-  background: #0d6efd;
-  color: white;
-  padding: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+    /* PDF Viewer Container */
+    #pdfContainer {
+      display: none;
+      background: #F8F9FA;
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid var(--border-color);
+    }
 
-#chat-close {
-  background: transparent;
-  border: none;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-}
+    .pdf-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
 
-#chat-box iframe {
-  width: 100%;
-  height: calc(100% - 40px);
-  border: none;
-}
+    .pdf-btn-download {
+      font-size: 13px;
+      color: var(--primary-color);
+      text-decoration: underline;
+      font-weight: 600;
+      cursor: pointer;
+    }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+    #pdfViewer {
+      width: 100%;
+      overflow-x: auto;
+      text-align: center;
+      background: #EAEAEA;
+      border-radius: 8px;
+      padding: 10px 0;
+    }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+    #pdfViewer canvas {
+      max-width: 100%;
+      height: auto !important;
+      border-radius: 6px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
 
-@media (max-width: 768px) {
-  #chat-box {
-    width: 100%;
-    height: 100%;
-    bottom: 0;
-    right: 0;
-    border-radius: 0;
-  }
-}
-</style>
+    .pdf-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 14px;
+    }
+
+    .btn-secondary {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .btn-secondary:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* Action Buttons */
+    .primary-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 20px;
+      box-shadow: 0 4px 12px rgba(26, 54, 54, 0.2);
+      transition: all 0.2s;
+    }
+
+    .primary-btn:hover {
+      background: #112424;
+    }
+
+    /* Floating Chat Button */
+    #chat-toggle {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--accent-gold);
+      color: #FFFFFF;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+      cursor: pointer;
+      z-index: 1000;
+      transition: transform 0.2s ease;
+    }
+
+    #chat-toggle:hover {
+      transform: scale(1.08);
+    }
+
+    #chat-box {
+      position: fixed;
+      bottom: 90px;
+      right: 24px;
+      width: 360px;
+      height: 520px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 1000;
+      border: 1px solid var(--border-color);
+    }
+
+    #chat-box.active {
+      display: flex;
+    }
+
+    #chat-header {
+      background: var(--primary-color);
+      color: white;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    #chat-close {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    #chat-box iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 480px) {
+      .card { padding: 20px 16px; }
+      #chat-box { width: 100%; height: 100%; bottom: 0; right: 0; border-radius: 0; }
+    }
+  </style>
 </head>
 <body>
 
 <div class="container">
   <div class="card">
-    <h1>☕ Le Chic Café</h1>
-    <p id="status">Checking table and generating menu...</p>
+    <!-- Brand Header -->
+    <div class="brand-header">
+      <div class="brand-logo">Le Chic Café</div>
+      <div id="tableBadge" class="table-badge">Table --</div>
+    </div>
 
-    <div class="spinner"></div>
-    <div id="menu"></div>
+    <!-- Communication Status Message -->
+    <p id="status" class="welcome-msg">Connecting to service desk...</p>
 
-    <button id="openPdf">📖 View Full Menu</button>
+    <!-- Loading Spinner -->
+    <div id="spinnerContainer" class="spinner-container">
+      <div class="spinner"></div>
+      <span style="font-size: 13px; color: #777;">Preparing customized menu recommendations...</span>
+    </div>
 
+    <!-- Navigation Tabs -->
+    <div id="viewTabs" class="view-tabs" style="display: none;">
+      <button id="tabRecommended" class="tab-btn active" onclick="switchView('recommended')">✨ Recommended</button>
+      <button id="tabFullMenu" class="tab-btn" onclick="switchView('full')">📋 All Categories</button>
+    </div>
+
+    <!-- Dynamic HTML Menu Container -->
+    <div id="menu" class="menu-section"></div>
+
+    <!-- PDF Viewer Toggle Button -->
+    <button id="openPdf" class="primary-btn">📖 View Full PDF Menu</button>
+
+    <!-- PDF Viewer Container -->
     <div id="pdfContainer">
+      <div class="pdf-actions">
+        <span style="font-weight: 600; font-size: 14px; color: var(--primary-color);">Official Menu PDF</span>
+        <a href="le chic menu.pdf" target="_blank" class="pdf-btn-download">Open in New Tab ↗</a>
+      </div>
+
       <div id="pdfViewer"></div>
-      <div class="navButtons">
-        <button id="prevPage">⬅ Prev</button>
-        <span id="pageInfo"></span>
-        <button id="nextPage">Next ➡</button>
+
+      <div class="pdf-nav">
+        <button id="prevPage" class="btn-secondary">⬅ Prev</button>
+        <span id="pageInfo" style="font-size: 13px; font-weight: 500;">Page 1 / --</span>
+        <button id="nextPage" class="btn-secondary">Next ➡</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Floating Chat Toggle Button -->
+<!-- Floating Chat Button -->
 <div id="chat-toggle">💬</div>
 
 <!-- Chatbox Container -->
 <div id="chat-box">
   <div id="chat-header">
-    <span>Chat with us</span>
-    <button id="chat-close">✖</button>
+    <span>Le Chic Assistant</span>
+    <button id="chat-close">✕</button>
   </div>
-  <iframe src="https://www.chatbase.co/chatbot-iframe/dbdzO-xP2dOJor0WlXtju" frameborder="0"></iframe>
+  <iframe src="https://www.chatbase.co/chatbot-iframe/dbdzO-xP2dOJor0WlXtju"></iframe>
 </div>
 
 <!-- Notification Sound -->
@@ -276,217 +426,237 @@ h1 {
 </audio>
 
 <script>
-// Initialize EmailJS
-(function(){
-  emailjs.init("WgUFtdGg6rd6lPxzi");
-})();
+  // Initialize EmailJS
+  (function(){
+    emailjs.init("WgUFtdGg6rd6lPxzi");
+  })();
 
-// Menu Data Structure
-const menu = {
-  hotDrinks: ["Coffee", "Tea", "Hot Chocolate"],
-  icedDrinks: ["Iced Coffee", "Iced Tea"],
-  juices: ["Passion Juice", "Pineapple Juice", "Tree Tomato Juice"],
-  smoothies: ["Banana Smoothie", "Strawberry Smoothie", "Le Chic Café Shake"],
-  milkshakes: ["Vanilla", "Chocolate", "Oreo"],
-  healthy: ["Fruits Plate", "Macedoine"],
-  breakfast: ["Toast", "Sandwich", "Omelette"],
-  lunch: ["Rice", "Spaghetti", "Wraps", "Chicken", "Beef"],
-  dinner: ["Pizza", "Burgers", "Salads", "Fish"]
-};
+  // Full Menu Data Array
+  const menuData = {
+    "Hot Drinks": ["Espresso", "Cappuccino", "Café Latte", "Special Tea", "Hot Chocolate"],
+    "Iced Drinks": ["Iced Latte", "Iced Americano", "Iced Passion Tea"],
+    "Fresh Juices": ["Passion Fruit Juice", "Pineapple Juice", "Tree Tomato Juice"],
+    "Smoothies & Shakes": ["Banana Smoothie", "Strawberry Smoothie", "Le Chic Signature Shake"],
+    "Milkshakes": ["Classic Vanilla", "Double Chocolate", "Oreo Crunch"],
+    "Healthy Plates": ["Fresh Fruit Plate", "Macedoine Fruit Salad"],
+    "Breakfast Specials": ["Avocado Toast", "Club Sandwich", "Cheese Omelette"],
+    "Lunch Entrees": ["Steamed Rice", "Spaghetti Bolognese", "Chicken Wraps", "Grilled Chicken", "Beef Tenderloin"],
+    "Dinner Specials": ["Artisanal Pizza", "Gourmet Burgers", "Chef's Garden Salad", "Grilled Fish Fillet"]
+  };
 
-const params = new URLSearchParams(window.location.search);
-const table = params.get("table");
+  const params = new URLSearchParams(window.location.search);
+  const table = params.get("table");
 
-const statusText = document.getElementById("status");
-const menuDiv = document.getElementById("menu");
-const spinner = document.querySelector(".spinner");
-const sound = document.getElementById("notifySound");
+  const statusText = document.getElementById("status");
+  const tableBadge = document.getElementById("tableBadge");
+  const menuDiv = document.getElementById("menu");
+  const spinnerContainer = document.getElementById("spinnerContainer");
+  const viewTabs = document.getElementById("viewTabs");
+  const sound = document.getElementById("notifySound");
 
-if(table){
-    statusText.innerHTML = "Fetching weather & generating menu...";
-    
-    // 1️⃣ Send email notification via EmailJS[cite: 1]
+  let suggestedItems = [];
+  let currentTab = 'recommended';
+
+  if (table) {
+    tableBadge.textContent = `Table ${table}`;
+    statusText.textContent = "Connecting with waiter desk & loading menu...";
+
+    // 1️⃣ Notify Wait Staff via EmailJS
     emailjs.send("Myclien005252", "Myclient0005252", {
       table_number: table,
-      time: new Date().toLocaleString()
-    }).then(() => {
-        console.log("Email sent successfully");
-    }).catch(err => {
-        console.log("Email error:", err);
-    });
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    }).catch(err => console.error("Notification Log:", err));
 
-    // 2️⃣ Get current time block[cite: 1]
-    let hour = new Date().getHours();
-    let suggestedItems = [];
-
-    // 3️⃣ Fetch weather conditions[cite: 1]
+    // 2️⃣ Fetch Local Weather and Calculate Time Context
+    const hour = new Date().getHours();
     const apiKey = "eac81531225c5562b2490a0bc0dc4a35";
     const city = "Kigali";
 
     fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`)
-    .then(res => res.json())
-    .then(data => {
-        const temp = data.main.temp;
-        const weather = data.weather[0].main.toLowerCase();
+      .then(res => res.json())
+      .then(data => {
+        const temp = data.main ? data.main.temp : 22;
+        const weather = data.weather ? data.weather[0].main.toLowerCase() : "clear";
 
-        // 4️⃣ Time-based suggestions[cite: 1]
-        if(hour < 11){
-            suggestedItems.push(...menu.breakfast, ...menu.hotDrinks);
-        } else if(hour < 15){
-            suggestedItems.push(...menu.lunch, ...menu.icedDrinks, ...menu.juices);
+        // Logic for Recommendations
+        if (hour < 11) {
+          suggestedItems.push(...menuData["Breakfast Specials"], ...menuData["Hot Drinks"]);
+        } else if (hour < 15) {
+          suggestedItems.push(...menuData["Lunch Entrees"], ...menuData["Iced Drinks"], ...menuData["Fresh Juices"]);
         } else {
-            suggestedItems.push(...menu.dinner, ...menu.smoothies, ...menu.milkshakes);
+          suggestedItems.push(...menuData["Dinner Specials"], ...menuData["Smoothies & Shakes"], ...menuData["Milkshakes"]);
         }
 
-        if(weather.includes("rain")){
-            suggestedItems.push(...menu.hotDrinks, "Soup");
-        } else if(weather.includes("clear") && temp > 25){
-            suggestedItems.push(...menu.icedDrinks, ...menu.smoothies, ...menu.juices);
+        if (weather.includes("rain")) {
+          suggestedItems.push(...menuData["Hot Drinks"]);
+        } else if (temp > 24) {
+          suggestedItems.push(...menuData["Iced Drinks"], ...menuData["Fresh Juices"], ...menuData["Smoothies & Shakes"]);
         }
 
-        // 5️⃣ Display filtered menu[cite: 1]
-        menuDiv.innerHTML = "";
+        spinnerContainer.style.display = "none";
+        viewTabs.style.display = "flex";
+        statusText.innerHTML = `Welcome! A staff member has been notified for <strong>Table ${table}</strong>. Take your time browsing our menu below.`;
 
-        for (const category in menu) {
-            const filteredItems = menu[category].filter(item => 
-                suggestedItems.includes(item)
-            );
+        renderMenu();
+        sound.play().catch(() => {});
+      })
+      .catch(() => {
+        spinnerContainer.style.display = "none";
+        viewTabs.style.display = "flex";
+        statusText.textContent = `Welcome to Table ${table}! Explore our complete menu selection below.`;
+        switchView('full');
+      });
 
-            if (filteredItems.length === 0) continue;
+  } else {
+    tableBadge.textContent = "Guest View";
+    spinnerContainer.style.display = "none";
+    viewTabs.style.display = "flex";
+    statusText.textContent = "Welcome to Le Chic Café! Browse our delicious offerings below.";
+    switchView('full');
+  }
 
-            const catDiv = document.createElement("div");
-            catDiv.className = "menu-category";
-            catDiv.textContent = category;
-            menuDiv.appendChild(catDiv);
+  // Render HTML Menu based on Tab View
+  function renderMenu() {
+    menuDiv.innerHTML = "";
 
-            filteredItems.forEach(item => {
-                const itemDiv = document.createElement("div");
-                itemDiv.className = "menu-item";
-                itemDiv.innerHTML = "✅ " + item;
-                menuDiv.appendChild(itemDiv);
-            });
-        }
+    for (const category in menuData) {
+      const items = menuData[category];
+      const itemsToDisplay = (currentTab === 'recommended') 
+        ? items.filter(item => suggestedItems.includes(item)) 
+        : items;
 
-        spinner.style.display = "none";
-        statusText.innerHTML = `Welcome! Staff notified for Table ${table}`;
-        sound.play().catch(e => console.log("Audio play blocked by browser policy:", e));
+      if (itemsToDisplay.length === 0) continue;
+
+      const catCard = document.createElement("div");
+      catCard.className = "category-card";
+
+      const catTitle = document.createElement("div");
+      catTitle.className = "category-title";
+      catTitle.textContent = category;
+      catCard.appendChild(catTitle);
+
+      itemsToDisplay.forEach(item => {
+        const row = document.createElement("div");
+        row.className = "menu-item-row";
+        
+        const isSuggested = suggestedItems.includes(item);
+        row.innerHTML = `
+          <span class="item-name">${item}</span>
+          ${isSuggested && currentTab === 'full' ? '<span class="item-tag">Recommended</span>' : ''}
+        `;
+        catCard.appendChild(row);
+      });
+
+      menuDiv.appendChild(catCard);
+    }
+  }
+
+  function switchView(tab) {
+    currentTab = tab;
+    document.getElementById("tabRecommended").classList.toggle("active", tab === 'recommended');
+    document.getElementById("tabFullMenu").classList.toggle("active", tab === 'full');
+    renderMenu();
+  }
+
+  /* High-DPI Rendering PDF Viewer Logic */
+  const openPdfBtn = document.getElementById("openPdf");
+  const pdfContainer = document.getElementById("pdfContainer");
+  const url = "le chic menu.pdf";
+
+  let pdfDoc = null,
+      pageNum = 1,
+      pageRendering = false,
+      pageNumPending = null;
+
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  document.getElementById("pdfViewer").appendChild(canvas);
+
+  openPdfBtn.addEventListener("click", () => {
+    if (pdfContainer.style.display === "none" || pdfContainer.style.display === "") {
+      pdfContainer.style.display = "block";
+      openPdfBtn.textContent = "✕ Close PDF View";
+      pdfContainer.scrollIntoView({ behavior: "smooth" });
+      if (!pdfDoc) loadPdf();
+    } else {
+      pdfContainer.style.display = "none";
+      openPdfBtn.textContent = "📖 View Full PDF Menu";
+    }
+  });
+
+  function loadPdf() {
+    pdfjsLib.getDocument(url).promise.then(pdf => {
+      pdfDoc = pdf;
+      renderPage(pageNum);
     }).catch(err => {
-        spinner.style.display = "none";
-        statusText.innerHTML = "Error fetching weather. Showing menu anyway.";
-        console.log(err);
+      document.getElementById("pdfViewer").innerHTML = `<p style="padding: 20px; font-size:13px; color: #888;">Unable to display embedded PDF directly. <a href="${url}" target="_blank">Click here to download/view the menu file</a>.</p>`;
     });
+  }
 
-} else {
-    spinner.style.display = "none";
-    statusText.innerHTML = "Invalid QR Code.";
-}
-
-/* PDF Viewer Logic[cite: 3] */
-const openPdfBtn = document.getElementById("openPdf");
-const pdfContainer = document.getElementById("pdfContainer");
-
-openPdfBtn.addEventListener("click", () => {
-    if(pdfContainer.style.display === "none" || pdfContainer.style.display === ""){
-        pdfContainer.style.display = "block";
-        openPdfBtn.textContent = "❌ Close Menu";
-        pdfContainer.scrollIntoView({behavior:"smooth"});
-    } else {
-        pdfContainer.style.display = "none";
-        openPdfBtn.textContent = "📖 View Full Menu";
-    }
-});
-
-const url = "le chic menu.pdf";
-let pdfDoc = null,
-    pageNum = 1,
-    pageRendering = false,
-    pageNumPending = null,
-    scale = 1.4;
-
-const canvas = document.createElement("canvas");
-const ctx = canvas.getContext("2d");
-document.getElementById("pdfViewer").appendChild(canvas);
-
-function renderPage(num){
+  function renderPage(num) {
     pageRendering = true;
-    pdfDoc.getPage(num).then(function(page){
-        const viewport = page.getViewport({scale: scale});
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
+    pdfDoc.getPage(num).then(page => {
+      // Calculate responsive scale based on container width
+      const containerWidth = document.getElementById("pdfViewer").clientWidth || 600;
+      const unscaledViewport = page.getViewport({ scale: 1 });
+      const scale = (containerWidth / unscaledViewport.width) * 1.5; // High resolution rendering
 
-        const renderContext = {
-            canvasContext: ctx,
-            viewport: viewport
-        };
-        const renderTask = page.render(renderContext);
+      const viewport = page.getViewport({ scale: scale });
+      canvas.height = viewport.height;
+      canvas.width = viewport.width;
 
-        renderTask.promise.then(function(){
-            pageRendering = false;
-            if(pageNumPending !== null){
-                renderPage(pageNumPending);
-                pageNumPending = null;
-            }
-        });
+      const renderContext = {
+        canvasContext: ctx,
+        viewport: viewport
+      };
+
+      const renderTask = page.render(renderContext);
+      renderTask.promise.then(() => {
+        pageRendering = false;
+        if (pageNumPending !== null) {
+          renderPage(pageNumPending);
+          pageNumPending = null;
+        }
+      });
     });
 
-    document.getElementById("pageInfo").textContent = "Page " + num + " / " + pdfDoc.numPages;
-}
+    document.getElementById("pageInfo").textContent = `Page ${num} / ${pdfDoc.numPages}`;
+    document.getElementById("prevPage").disabled = num <= 1;
+    document.getElementById("nextPage").disabled = num >= pdfDoc.numPages;
+  }
 
-function queueRenderPage(num){
-    if(pageRendering){
-        pageNumPending = num;
+  function queueRenderPage(num) {
+    if (pageRendering) {
+      pageNumPending = num;
     } else {
-        renderPage(num);
+      renderPage(num);
     }
-}
+  }
 
-document.getElementById("prevPage").addEventListener("click", function(){
-    if(pageNum <= 1) return;
+  document.getElementById("prevPage").addEventListener("click", () => {
+    if (pageNum <= 1) return;
     pageNum--;
     queueRenderPage(pageNum);
-});
+  });
 
-document.getElementById("nextPage").addEventListener("click", function(){
-    if(pageNum >= pdfDoc.numPages) return;
+  document.getElementById("nextPage").addEventListener("click", () => {
+    if (pageNum >= pdfDoc.numPages) return;
     pageNum++;
     queueRenderPage(pageNum);
-});
+  });
 
-pdfjsLib.getDocument(url).promise.then(function(pdfDoc_){
-    pdfDoc = pdfDoc_;
-    renderPage(pageNum);
-});
-
-/* Chatbox Toggles[cite: 3] */
-document.addEventListener("DOMContentLoaded", function () {
+  /* Floating Chatbot Logic */
   const chatToggle = document.getElementById("chat-toggle");
   const chatBox = document.getElementById("chat-box");
   const chatClose = document.getElementById("chat-close");
 
-  chatToggle.addEventListener("click", function () {
-    chatBox.classList.add("active");
-    chatToggle.classList.add("hidden");
+  chatToggle.addEventListener("click", () => {
+    chatBox.classList.toggle("active");
   });
 
-  chatClose.addEventListener("click", function () {
+  chatClose.addEventListener("click", () => {
     chatBox.classList.remove("active");
-    chatToggle.classList.remove("hidden");
   });
-});
-
-document.addEventListener("click", function (e) {
-  const chatBox = document.getElementById("chat-box");
-  const chatToggle = document.getElementById("chat-toggle");
-
-  if (
-    chatBox.classList.contains("active") &&
-    !chatBox.contains(e.target) &&
-    !chatToggle.contains(e.target)
-  ) {
-    chatBox.classList.remove("active");
-    chatToggle.classList.remove("hidden");
-  }
-});
 </script>
 </body>
 </html>
